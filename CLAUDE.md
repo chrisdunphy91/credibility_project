@@ -55,7 +55,7 @@ references/
   <claim-id>.bib
 scripts/
   validate.R                pre-render validation; build fails on missing required fields
-.github/workflows/          renders and deploys on push to main
+.github/workflows/          check.yml renders every PR (publishes nothing); publish.yml deploys, manual only
 ```
 
 Published content: `claims/`, `topics/`, `index.qmd`, `about.qmd`, `methods.qmd`. Nothing in `research/` renders, but it may be published later, so keep it honest.

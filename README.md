@@ -10,3 +10,5 @@ A Quarto site that grades public policy claims against the causal research liter
 - `claims/_template/` — start every new claim by copying this folder
 
 Build: `quarto render`. The pre-render step `scripts/validate.R` fails the build if any claim is missing required fields.
+
+Deploy: manual only. Actions tab → "Render and publish site" → Run workflow (on `main`). Pull requests are checked by "Check site", which renders but publishes nothing.

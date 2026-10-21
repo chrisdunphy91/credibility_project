@@ -1,0 +1,90 @@
+# claim.yml — structured record for one claim page.
+# Everything that can be validated lives here; prose lives in index.qmd.
+# scripts/validate.R fails the build if any REQUIRED field is missing or a placeholder remains.
+# Sections marked (pre-registration) are frozen once registered; later changes go in methods.registration.amendments.
+
+id: CLAIM-ID                       # REQUIRED, e.g. tr-04
+short_title: SHORT TITLE           # e.g. Who pays for tariffs?
+topic: TOPIC-SLUG                  # must match topics/<slug>.qmd
+site_name: The Credibility Project
+url: PAGE URL ONCE PUBLISHED
+protocol_version: v0.1             # REQUIRED
+election_relevance: High           # High / Medium / Low; sets re-search cadence
+last_updated: YYYY-MM-DD           # REQUIRED
+
+public_claim:                      # (pre-registration)
+  verbatim: "PUBLIC CLAIM AS PEOPLE SAY IT"
+  instances:                       # REQUIRED: at least two
+    - { speaker: "", date: YYYY-MM-DD, url: "" }
+    - { speaker: "", date: YYYY-MM-DD, url: "" }
+  where_heard: "One sentence on where the claim circulates."
+  mapping_note: "How the tested statement relates to the public claim: which reading we tested (the strong one), what we set aside, and why."
+
+tested_statements:                 # (pre-registration) REQUIRED: one per verdict
+  - scope: Jobs                    # use "Main" when there is only one
+    pecos: "POPULATION (P) exposed to EXPOSURE with dose (E), relative to COMPARISON (C), experience OUTCOME with magnitude (O), in SETTING country and period (S)."
+
+verdicts:                          # REQUIRED: one per tested statement, same scope labels
+  - scope: Jobs
+    verdict: PLACEHOLDER           # Supported / Not supported / Mixed / Cannot be graded
+    statement: "One or two sentences stating the finding in plain words."
+    certainty: PLACEHOLDER         # High / Moderate / Low / Very low  (omit if verdict is Cannot be graded)
+    certainty_note: "One sentence on what holds the grade where it is, or on a split by policy generation."
+
+certainty_scores:                  # REQUIRED: five rows per scope (protocol §11)
+  - { scope: Jobs, criterion: "Number and quality of causal studies", score: PLACEHOLDER, reason: "" }
+  - { scope: Jobs, criterion: "Consistency of direction",             score: PLACEHOLDER, reason: "" }
+  - { scope: Jobs, criterion: "Consistency of magnitude",             score: PLACEHOLDER, reason: "" }
+  - { scope: Jobs, criterion: "External validity to current policy",  score: PLACEHOLDER, reason: "" }
+  - { scope: Jobs, criterion: "Recency and publication status",       score: PLACEHOLDER, reason: "" }
+  # score: Strong / Partial / Weak. If reviewers disagreed, put both in reason: "R1 Strong, R2 Partial — resolved Partial because …"
+
+key_numbers:                       # 2–3 entries; each must cite study_id rows from studies.csv
+  - { figure: "~100%", label: "what the number is", source_rows: "S01, S02, S03" }
+
+reviewers:                         # REQUIRED: lead and second, each with a rationale; adversarial reader without
+  - role: Lead reviewer
+    name: NAME
+    affiliation: AFFILIATION
+    coi: "none declared"
+    rationale: "150–300 words tracing the verdict and certainty to table rows."
+  - role: Second reviewer
+    name: NAME
+    affiliation: AFFILIATION
+    coi: "none declared"
+    rationale: "150–300 words, written independently before discussion."
+  - role: Adversarial reader
+    name: NAME
+    affiliation: AFFILIATION
+    coi: "stated position: …"
+    rationale: "Optional: comments on the steelman."
+
+methods:
+  registration:                    # REQUIRED
+    registry: OSF                  # or "signed commit"
+    url: REGISTRATION URL
+    date: YYYY-MM-DD
+    amendments: "none"             # or "YYYY-MM-DD: widened date range to 1995 because …"
+  search:                          # (pre-registration)
+    sources: [OpenAlex, NBER, SSRN, EconLit]
+    queries:
+      - "query string one"
+      - "query string two"
+    date_range: "2000–present"
+    grey_literature: "per protocol §5.4"
+    ai_agent: "model and version; prompt at research/CLAIM-ID/prompt.md"
+    last_run: YYYY-MM-DD
+    rerun_schedule: monthly        # monthly if election_relevance High, else quarterly
+  inclusion:                       # (pre-registration)
+    designs: "per protocol §6.1"
+    claim_specific: "any additions or exclusions specific to this claim"
+  screening:                       # REQUIRED once search is complete
+    records: 0
+    deduplicated: 0
+    full_text: 0
+    included: 0
+  ai_use: "AI assisted search, de-duplication, and extraction drafts; every included row verified by [initials]."
+  challenge_contact: "challenges@SITE or a GitHub issues link"
+
+changelog:                         # REQUIRED: at least one entry
+  - { date: YYYY-MM-DD, version: "1.0", note: "Page created under Protocol v0.1." }

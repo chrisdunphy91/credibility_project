@@ -1,20 +1,9 @@
-# Quarto
-/_site/
 /.quarto/
-/.luarc.json
-*_files/
-
-# macOS
-.DS_Store
-
-# R / RStudio
-.Rproj.user/
+/_site/
+/_freeze/
 .Rhistory
 .RData
-.Ruserdata
-.Rapp.history
+.Rproj.user/
 *.Rproj
-/renv/library/
-/renv/staging/
-
-**/*.quarto_ipynb
+CLAUDE.local.md
+.DS_Store

@@ -1,0 +1,2 @@
+record_id,citation,doi_or_url,stage,decision,reason_code,reason_note,screener_1,screener_2,resolved_by
+R001,"Author (YYYY). Title. Venue.",https://doi.org/[VERIFY],full-text,Exclude,no-causal-design,"[one line]",[initials],[initials],

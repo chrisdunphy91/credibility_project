@@ -1,48 +1,35 @@
-# The site name is defined once here. Reference it in pages with
-# {{< meta site-title >}}; the website title below reuses it via the anchor.
-site-title: &site-title "The Credibility Project"
-
-# Starter list of allowed values for `categories:` in topic page front matter.
-# Quarto does not enforce this list; it is the reference for authors.
-topic-categories:
-  - labor
-  - taxes
-  - housing
-  - health
-  - education
-  - trade
-  - immigration
-  - environment
-  - regulation
-  - prices
-
 project:
   type: website
   output-dir: _site
-  # Render only published content. research/, README.md, and CLAUDE.md are
-  # never rendered; the topic template is excluded explicitly.
-  render:
-    - index.qmd
-    - about.qmd
-    - topics/*.qmd
-    - "!topics/_template.qmd"
+  pre-render: scripts/validate.R      # fails the build on missing required claim fields
+  resources:
+    - "claims/*/studies.csv"
+    - "claims/*/search-log.csv"
+    - "claims/*/screening.csv"
 
 website:
-  title: *site-title
+  title: "The Credibility Project"
+  description: "What the economic evidence says, and how sure we are."
   navbar:
     left:
-      - href: index.qmd
-        text: Home
-      - href: topics/index.qmd
-        text: Topics
-      - href: about.qmd
-        text: About
+      - text: Topics
+        href: topics/index.qmd
+      - text: Claims
+        href: claims/index.qmd
+      - text: Methods
+        href: methods.qmd
+      - text: About
+        href: about.qmd
   page-footer:
-    center: "Summaries of the published research. Not advocacy. See [About](/about.qmd) for our methods."
+    left: "The Credibility Project is nonpartisan and publishes its protocol, study tables, and reviewer conflicts of interest for every page."
 
 format:
   html:
     theme: cosmo
+    css: styles.css
     toc: true
-    toc-depth: 2
-    link-external-newwindow: true
+    code-fold: false
+    echo: false
+
+execute:
+  freeze: auto

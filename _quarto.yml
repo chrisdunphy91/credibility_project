@@ -2,10 +2,17 @@ project:
   type: website
   output-dir: _site
   pre-render: scripts/validate.R      # fails the build on missing required claim fields
-  resources:
-    - "claims/*/studies.csv"
-    - "claims/*/search-log.csv"
-    - "claims/*/screening.csv"
+  post-render: scripts/prune-drafts.R # removes draft claims' output, including their CSVs
+  render:                             # whitelist: README, CLAUDE.md, docs/ and research/ never render
+    - index.qmd
+    - about.qmd
+    - methods.qmd
+    - topics/*.qmd
+    - claims/index.qmd
+    - claims/*/index.qmd
+    - "!topics/_template.qmd"
+    - "!claims/_template/"
+  # Each claim's index.qmd declares its own CSVs under `resources:` so they download.
 
 website:
   title: "The Credibility Project"

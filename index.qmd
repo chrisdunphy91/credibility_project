@@ -1,0 +1,24 @@
+---
+title: "{{< var site-title >}}"
+subtitle: "{{< var tagline >}}"
+toc: false
+---
+
+Politicians, advocates, and commentators make claims about what policies do: who pays for tariffs, whether rent control lowers rents, whether a higher minimum wage costs jobs. {{< var site-title >}} checks those claims against the research that can actually answer them: studies built to separate a policy's effect from everything else going on at the time.
+
+Each claim page works through the same steps:
+
+1. **The claim as people say it**, quoted from at least two public sources.
+2. **The statement we tested**, written precisely enough to be checked, including how big the effect would have to be.
+3. **Every study we included**, in a table you can download, with how much weight each one carries and why.
+4. **Two separate grades.** The *verdict* says what the evidence shows. The *certainty* says how likely that verdict is to hold up as new research arrives.
+5. **Where experts disagree, and why**, including the strongest case against our reading and what would change our mind.
+
+Two named reviewers grade every claim independently, and both of their reasoning is published. We do not recommend policies or discuss politicians.
+
+You can read each page at three depths: a 30-second summary, numbered sections, and the full study table.
+
+- [Browse claims](claims/index.qmd)
+- [Browse topics](topics/index.qmd)
+- [How we review evidence](methods.qmd)
+- [About the project](about.qmd)

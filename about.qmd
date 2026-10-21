@@ -1,0 +1,31 @@
+---
+title: "About"
+---
+
+## Mission
+
+{{< var site-title >}} reports what the causal research literature says about the effects of public policy, and how sure we are, for a general audience ahead of elections and major policy decisions. What we offer is transparency, not verdicts handed down: every page shows the claim, the statement we tested, every study we included, how each was weighted, who reviewed it, and what would change our assessment. Anyone who disagrees with us can rerun our search and reproduce our table.
+
+## What we cover
+
+We review claims about the effects of policy where the evidence comes from quantitative causal research: experiments, natural experiments, and statistical designs that separate a policy's effect from other changes happening at the same time. The researcher's field does not matter; the type of evidence does.
+
+We do not review whether a policy is good or bad, claims about individual politicians, medical or natural-science claims, constitutional or legal questions, foreign policy, or claims whose evidence is polling or case studies. When the research on a claim is too thin to grade, we say so and describe the evidence that would be needed.
+
+## How we work
+
+Every review follows the published [Evidence Review Protocol](methods.qmd). We write down the question, the search, and the inclusion rules, and time-stamp them, before reading any study. Two named reviewers grade each claim independently, and an economist who holds or can argue the opposing view reads every page before it is published. AI tools help with searching and with drafting the study table; a named human checks every number and assigns every grade.
+
+## Editorial board
+
+To be announced. The protocol calls for five to seven economists spanning the field's range of views, no two from the same institution.
+
+## Funding
+
+To be announced. Funders will be listed here. Funders have no role in choosing topics, framing claims, or reviewing evidence.
+
+## Challenges and corrections
+
+Anyone can challenge a page: a missing study, an error in the study table, a dispute about how a study was rated, or an objection to how a claim was framed. Each challenge gets a public record, a response from the lead reviewer (the target response time is still being set), and a logged decision. Upheld challenges are credited by name if the challenger wishes. Each claim page links to its challenge route.
+
+Factual errors are corrected in place with a dated note. A correction that changes a verdict or certainty grade goes through re-review, and the page says what changed and why.

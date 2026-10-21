@@ -1,0 +1,21 @@
+---
+title: "Topics"
+subtitle: "Policy areas, each linking to the claims we have reviewed."
+toc: false
+listing:
+  id: topics
+  contents: "*.qmd"          # index.qmd and _template.qmd are excluded automatically
+  type: table
+  fields: [title, subtitle]
+  field-display-names:
+    title: Topic
+    subtitle: What it covers
+  sort: title
+  filter-ui: false
+  sort-ui: false
+---
+
+A topic page collects the claim pages in one policy area. Topic pages do not grade anything; the grades are on each claim page.
+
+::: {#topics}
+:::

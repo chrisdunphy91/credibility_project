@@ -11,6 +11,7 @@ resources:
   - screening.csv
 toc: true
 toc-depth: 2
+draft: true                       # keeps the page off the site and out of validate.R; remove at gate 6
 ---
 
 <!--
@@ -32,7 +33,11 @@ library(readr)
 library(dplyr)
 library(knitr)
 claim   <- read_yaml("claim.yml")
-studies <- read_csv("studies.csv", show_col_types = FALSE)
+# All columns as text: "[VERIFY]" and empty CSVs would otherwise change column types.
+studies <- read_csv("studies.csv", col_types = cols(.default = col_character()))
+`%||%` <- function(a, b) if (is.null(a) || length(a) == 0) b else a
+# Escape brackets that break markdown link text (kable already escapes "|").
+md_text <- function(x) gsub("([][])", "\\\\\\1", x %||% "")
 ```
 
 ```{r header, echo=FALSE, results='asis'}
@@ -45,9 +50,12 @@ cat("**Where you hear it:** ", claim$public_claim$where_heard, "\n\n", sep = "")
 ```{r verdicts, echo=FALSE, results='asis'}
 # One callout per verdict. Most claims have one; a split claim (shared evidence base,
 # two causal statements) has two. See protocol §3.4.
+# "Cannot be graded" verdicts carry no certainty grade (protocol §10).
 for (v in claim$verdicts) {
-  cat(sprintf('::: {.callout-important title="Our assessment — %s: %s"}\n%s\n\n*Certainty: **%s**.* %s\n:::\n\n',
-              v$scope, v$verdict, v$statement, v$certainty, v$certainty_note))
+  certainty <- if (is.null(v$certainty)) ""
+               else sprintf("*Certainty: **%s**.* %s", v$certainty, v$certainty_note %||% "")
+  cat(sprintf('::: {.callout-important title="Our assessment — %s: %s"}\n%s\n\n%s\n:::\n\n',
+              v$scope, v$verdict, v$statement %||% "", certainty))
 }
 ```
 
@@ -99,11 +107,11 @@ studies |>
   mutate(Weight = paste0(quality_tier, ifelse(pub_status == "Working paper", "*", ""),
                          " / R", relevance_tier)) |>
   transmute(ID = study_id,
-            Study = paste0("[", citation, "](", doi_or_url, ")"),
+            Study = paste0("[", md_text(citation), "](", doi_or_url, ")"),
             Design = design,
             Setting = paste(country, period, sep = ", "),
-            Outcome = outcome,
-            Finding = finding_summary,
+            Outcome = md_text(outcome),
+            Finding = md_text(finding_summary),
             Weight) |>
   kable(caption = "Included studies. Weight = quality tier A–D / relevance tier 1–3; * = working paper at time of review. Full extraction fields, effect sizes, and standard errors are in the downloadable CSV.")
 ```
@@ -117,15 +125,18 @@ STRUCTURED NARRATIVE SYNTHESIS, in this order (protocol §9.2): direction → ma
 ONE PARAGRAPH per verdict restating it and naming which criteria hold the certainty grade where it is.
 
 ```{r certainty, echo=FALSE}
-bind_rows(lapply(claim$certainty_scores, as_tibble)) |>
-  select(Scope = scope, Criterion = criterion, Score = score, Why = reason) |>
+field <- function(rows, k) vapply(rows, function(r) as.character(r[[k]] %||% ""), character(1))
+cs <- claim$certainty_scores
+tibble(Scope = field(cs, "scope"), Criterion = field(cs, "criterion"),
+       Score = field(cs, "score"), Why = md_text(field(cs, "reason"))) |>
   kable(caption = "Certainty criteria (protocol §11). Scored independently by two reviewers; disagreements noted in the Why column.")
 ```
 
 ```{r rationales, echo=FALSE, results='asis'}
 cat("::: {.callout-tip collapse=\"true\" title=\"Reviewer rationales\"}\n")
 for (r in claim$reviewers) {
-  cat(sprintf("**%s (%s)** — %s\n\n", r$name, r$role, r$rationale))
+  if (nzchar(r$rationale %||% ""))   # the adversarial reader's comment is optional
+    cat(sprintf("**%s (%s)** — %s\n\n", r$name %||% "", r$role %||% "", r$rationale))
 }
 cat(":::\n\n")
 ```
@@ -154,22 +165,28 @@ m <- claim$methods
 cat("::: {.callout-tip collapse=\"true\" title=\"Protocol, registration, search, screening, AI use, reviewers\"}\n")
 cat(sprintf("- **Protocol:** %s ([read the protocol](../../methods.qmd))\n", claim$protocol_version))
 cat(sprintf("- **Registration:** [%s](%s), posted %s; amendments: %s\n",
-            m$registration$registry, m$registration$url, m$registration$date, m$registration$amendments))
+            m$registration$registry %||% "", m$registration$url %||% "",
+            m$registration$date %||% "", m$registration$amendments %||% "none"))
 cat(sprintf("- **Sources searched:** %s; last run %s; rerun %s\n",
-            paste(m$search$sources, collapse = ", "), m$search$last_run, m$search$rerun_schedule))
+            paste(m$search$sources, collapse = ", "), m$search$last_run %||% "",
+            m$search$rerun_schedule %||% ""))
+n <- function(x) as.integer(x %||% NA)
 cat(sprintf("- **Screening:** %d records → %d after de-duplication → %d full texts → %d included\n",
-            m$screening$records, m$screening$deduplicated, m$screening$full_text, m$screening$included))
-cat(sprintf("- **AI use:** %s\n", m$ai_use))
+            n(m$screening$records), n(m$screening$deduplicated),
+            n(m$screening$full_text), n(m$screening$included)))
+cat(sprintf("- **AI use:** %s\n", m$ai_use %||% ""))
 for (r in claim$reviewers) cat(sprintf("- **%s:** %s, %s; conflicts of interest: %s\n",
-                                       r$role, r$name, r$affiliation, r$coi))
-cat(sprintf("- **Challenge this page / suggest a missing study:** %s\n", m$challenge_contact))
+                                       r$role %||% "", r$name %||% "",
+                                       r$affiliation %||% "", r$coi %||% ""))
+cat(sprintf("- **Challenge this page / suggest a missing study:** %s\n", m$challenge_contact %||% ""))
 cat(":::\n\n")
 ```
 
 ## Changelog
 
 ```{r changelog, echo=FALSE, results='asis'}
-for (c in rev(claim$changelog)) cat(sprintf("- **%s** (v%s) — %s\n", c$date, c$version, c$note))
+for (e in rev(claim$changelog)) cat(sprintf("- **%s** (v%s) — %s\n",
+                                            e$date %||% "", e$version %||% "", e$note %||% ""))
 ```
 
 ## Cite this page

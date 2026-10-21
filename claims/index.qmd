@@ -1,0 +1,22 @@
+---
+title: "Claims"
+subtitle: "Each page tests one public claim against the causal research."
+toc: false
+listing:
+  id: claims
+  contents: "*/index.qmd"    # claims/_template/ is excluded automatically (leading _)
+  type: table
+  fields: [title, subtitle, categories]
+  field-display-names:
+    title: Claim
+    subtitle: The question underneath
+    categories: Topic
+  sort: title
+  filter-ui: true
+  sort-ui: true
+---
+
+Each claim page shows the claim as people say it, the statement we tested, every study we included, and two separate grades: a verdict on what the evidence shows and a certainty grade for how likely that verdict is to hold up.
+
+::: {#claims}
+:::

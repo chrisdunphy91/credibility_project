@@ -4,6 +4,8 @@ subtitle: "One sentence on what this topic covers and why it matters now."
 listing:
   id: claims
   contents: "../claims/*/index.qmd"
+  include:
+    categories: "TOPIC-SLUG"       # this topic's slug; must match each claim's categories
   type: table
   fields: [title, categories, date-modified]
   filter-ui: false
@@ -14,8 +16,8 @@ listing:
 A topic page is a container, not a review. It never grades anything.
 Keep it to: a short framing paragraph, the listing of claim pages, and
 (optionally) a few descriptive facts about the policy with descriptive sources.
-The listing above is Quarto's listing feature; Claude Code should filter it
-to this topic's category.
+The listing above is Quarto's listing feature, filtered to this topic's
+category by `include: categories`.
 -->
 
 ONE OR TWO PARAGRAPHS framing the policy area in neutral terms and naming the claims people argue about. Each claim below has its own graded page.

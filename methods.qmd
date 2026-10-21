@@ -1,0 +1,10 @@
+---
+title: "Methods"
+subtitle: "The Evidence Review Protocol that governs every claim page."
+shift-heading-level-by: 1
+toc-depth: 3
+---
+
+Every claim page names the protocol version it was reviewed under. The current protocol follows in full.
+
+{{< include docs/protocol.md >}}

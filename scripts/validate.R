@@ -9,6 +9,7 @@
 # never computes or proposes a verdict, tier, or certainty grade.
 #
 # Run by hand: Rscript scripts/validate.R   (from the project root)
+# Local preview of a failing claim: set CREDIBILITY_SKIP_VALIDATION=1 (see CLAUDE.md).
 
 suppressPackageStartupMessages(library(yaml))
 
@@ -33,11 +34,11 @@ ACRONYMS <- c("OSF", "NBER", "CEPR", "IZA", "IMF", "SSRN", "OECD", "PECOS", "GRA
               "USMCA", "WTO", "GDP", "CPI", "COVID", "COVID-19", "PCE", "FRED")
 
 # Template values that are legitimate as-is in a finished claim.
-DEFAULTS_OK <- c("The Credibility Project", "v0.1", "High", "Medium", "Low", "OSF",
+DEFAULTS_OK <- c("The Credibility Project", "v0.2", "High", "Medium", "Low", "OSF",
                  "signed commit", "none", "none declared", "per protocol §5.4",
                  "per protocol §6.1", "2000–present", "monthly", "quarterly",
                  "OpenAlex", "NBER", "SSRN", "EconLit", "Jobs", "Main", "1.0",
-                 "Page created under Protocol v0.1.", "~100%", "S01, S02, S03",
+                 "Page created under Protocol v0.2.", "~100%", "S01, S02, S03",
                  "Lead reviewer", "Second reviewer", "Adversarial reader", CRITERIA)
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
@@ -79,18 +80,25 @@ leaves <- function(x, path = "") {
   } else list()
 }
 
+# Bracketed text is a placeholder unless it is a row cite [S03], a citation
+# [@key], a footnote [^1], the text of a markdown link [text](url), or a span
+# [text]{.class}.
+bracket_placeholder <- function(s) {
+  m <- gregexpr("\\[[^]]*\\](?![({])", s, perl = TRUE)
+  for (b in regmatches(s, m)[[1]]) {
+    inner <- substr(b, 2, nchar(b) - 1)
+    if (!grepl("^(S\\d{2,}([,;] ?S\\d{2,})*|@.*|\\^.*)$", inner)) return(sprintf("bracketed placeholder %s", b))
+  }
+  NULL
+}
+
 # Return a reason if a string looks like an unfilled placeholder, else NULL.
 placeholder_reason <- function(s) {
   if (grepl("PLACEHOLDER", s, fixed = TRUE)) return("still PLACEHOLDER")
   if (grepl("YYYY", s, fixed = TRUE))        return("contains YYYY")
   if (grepl("[VERIFY]", s, fixed = TRUE))    return("contains [VERIFY]")
-  # Bracketed text is a placeholder unless it is a row cite [S03], a citation
-  # [@key], or the text of a markdown link [text](url).
-  m <- gregexpr("\\[[^]]*\\](?!\\()", s, perl = TRUE)
-  for (b in regmatches(s, m)[[1]]) {
-    inner <- substr(b, 2, nchar(b) - 1)
-    if (!grepl("^(S\\d{2,}([,;] ?S\\d{2,})*|@.*)$", inner)) return(sprintf("bracketed placeholder %s", b))
-  }
+  why <- bracket_placeholder(s)
+  if (!is.null(why)) return(why)
   # ALL-CAPS placeholders: CLAIM-ID, NAME, PAGE URL ONCE PUBLISHED.
   m <- gregexpr("(?<![A-Za-z0-9])[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*(?![A-Za-z0-9])", s, perl = TRUE)
   toks <- regmatches(s, m)[[1]]
@@ -181,13 +189,19 @@ check_claim <- function(dir) {
       err(f, paste0(p, ".verdict"), sprintf("must be one of: %s", paste(VERDICTS, collapse = " / ")))
     if (is_blank(v$statement)) err(f, paste0(p, ".statement"), "missing")
     gradeable <- !identical(v$verdict, "Cannot be graded")
-    if ((gradeable || !is.null(v$certainty)) && !isTRUE(v$certainty %in% CERTAINTY))
+    if (!gradeable && !is.null(v$certainty))
+      err(f, paste0(p, ".certainty"), "must be omitted when the verdict is Cannot be graded")
+    if (gradeable && !isTRUE(v$certainty %in% CERTAINTY))
       err(f, paste0(p, ".certainty"), sprintf("must be one of: %s", paste(CERTAINTY, collapse = " / ")))
   }
 
-  # Certainty criteria: five rows per scope (protocol §11).
+  # Certainty criteria: five rows per gradeable scope, none for a "Cannot be graded"
+  # scope (protocol §10, §11).
   cs <- claim$certainty_scores %||% list()
-  for (s in vscopes) {
+  ungraded <- unlist(lapply(Filter(function(v) identical(v$verdict, "Cannot be graded"), vs), `[[`, "scope"))
+  for (s in intersect(ungraded, unlist(lapply(cs, `[[`, "scope"))))
+    err(f, sprintf("certainty_scores[%s]", s), sprintf("scope '%s' is Cannot be graded and takes no criterion rows", s))
+  for (s in setdiff(vscopes, ungraded)) {
     rows <- Filter(function(r) identical(r$scope, s), cs)
     crit <- unlist(lapply(rows, `[[`, "criterion"))
     if (length(rows) != 5 || !setequal(crit, CRITERIA) || anyDuplicated(crit))
@@ -241,15 +255,29 @@ check_claim <- function(dir) {
   if (!is.null(fm$bibliography) && !file.exists(file.path(dir, fm$bibliography)))
     err(qmd, "bibliography", sprintf("%s not found", fm$bibliography))
 
-  # Leftover template prompts in the page prose: two or more ALL-CAPS words in a
-  # row (OPEN QUESTION, LINKS OR "None yet."), outside code chunks.
+  # Bibliography entries must not carry [VERIFY] (comment lines starting % are skipped).
+  bib <- if (is.null(fm$bibliography)) character(0) else file.path(dir, fm$bibliography)
+  if (length(bib) && file.exists(bib)) {
+    bl <- readLines(bib, warn = FALSE, encoding = "UTF-8")
+    hits <- which(grepl("[VERIFY]", bl, fixed = TRUE) & !grepl("^\\s*%", bl))
+    if (length(hits)) err(bib, sprintf("line %d", hits[1]), sprintf("%d line(s) still contain [VERIFY]", length(hits)))
+  }
+
+  # Leftover template prompts in the page prose, outside the front matter and code
+  # chunks: two or more ALL-CAPS words in a row (OPEN QUESTION, LINKS OR "None yet."),
+  # [VERIFY] / YYYY / PLACEHOLDER, or bracketed placeholders ([to be filled]).
   body <- readLines(qmd, warn = FALSE, encoding = "UTF-8")
+  fm_end <- which(trimws(body) == "---")[2] %||% 0
   in_chunk <- cumsum(grepl("^```", body)) %% 2 == 1
-  for (h in which(!in_chunk)) {
+  for (h in setdiff(which(!in_chunk & !grepl("^```", body)), seq_len(fm_end))) {
     runs <- regmatches(body[h], gregexpr("(?<![A-Za-z])[A-Z][A-Z'’-]+(?:[ ,]+[A-Z][A-Z'’-]+)+(?![a-z])",
                                          body[h], perl = TRUE))[[1]]
     runs <- Filter(function(r) !all(strsplit(r, "[ ,]+")[[1]] %in% ACRONYMS), runs)
     if (length(runs)) err(qmd, sprintf("line %d", h), sprintf("template prompt left in: %s", substr(runs[1], 1, 60)))
+    why <- if (grepl("[VERIFY]", body[h], fixed = TRUE)) "contains [VERIFY]"
+           else if (grepl("YYYY|PLACEHOLDER", body[h])) "contains YYYY or PLACEHOLDER"
+           else bracket_placeholder(body[h])
+    if (!is.null(why)) err(qmd, sprintf("line %d", h), why)
   }
 
   # Study table: fixed columns (protocol App. B), every row verified (gate 4).
@@ -264,12 +292,46 @@ check_claim <- function(dir) {
       bad <- names(st)[vapply(st[i, ], function(x) grepl("[VERIFY]", x, fixed = TRUE) || grepl("YYYY", x, fixed = TRUE), logical(1))]
       if (length(bad)) err(sf, id, sprintf("unverified or placeholder value in: %s", paste(bad, collapse = ", ")))
       if ("verified_by" %in% names(st) && (is_blank(st$verified_by[i]) || grepl("[", st$verified_by[i], fixed = TRUE)))
-        err(sf, id, "verified_by is empty; a human must initial every row")
+        err(sf, paste0(id, ".verified_by"), "verified_by is empty; a human must initial every row")
+      # Tiers take protocol §8 values; the working-paper asterisk is added from pub_status.
+      if ("quality_tier" %in% names(st) && !(st$quality_tier[i] %in% c("A", "B", "C", "D")))
+        err(sf, paste0(id, ".quality_tier"), sprintf("'%s' must be A / B / C / D", st$quality_tier[i]))
+      if ("relevance_tier" %in% names(st) && !(st$relevance_tier[i] %in% c("1", "2", "3")))
+        err(sf, paste0(id, ".relevance_tier"), sprintf("'%s' must be 1 / 2 / 3", st$relevance_tier[i]))
+    }
+
+    # Key numbers must cite rows that exist (protocol §17).
+    ids <- st$study_id %||% character(0)
+    for (i in seq_along(claim$key_numbers)) {
+      rows <- strsplit(trimws(claim$key_numbers[[i]]$source_rows %||% ""), "[,;[:space:]]+")[[1]]
+      if (!length(rows) || !all(rows %in% ids))
+        err(f, sprintf("key_numbers[%d].source_rows", i),
+            if (!length(rows)) "must list study_ids in studies.csv; none given"
+            else sprintf("must list study_ids in studies.csv; not found: %s",
+                         paste(setdiff(rows, ids), collapse = ", ")))
+    }
+
+    # Screening counts must narrow monotonically and end at the number of table rows.
+    sc <- unlist(m$screening[c("records", "deduplicated", "full_text", "included")])
+    if (is.numeric(sc) && length(sc) == 4) {
+      if (any(diff(sc) > 0))
+        err(f, "methods.screening", "counts must not increase from records → deduplicated → full_text → included")
+      if (sc[4] != nrow(st))
+        err(f, "methods.screening.included", sprintf("is %d but studies.csv has %d row(s)", sc[4], nrow(st)))
     }
   }
 }
 
 # ---- run -------------------------------------------------------------------
+
+# Local-preview escape hatch: CREDIBILITY_SKIP_VALIDATION=1 still runs every check and
+# prints the problems, but lets the build continue. Refused on CI so nothing that
+# fails validation can be rendered by check.yml or deployed by publish.yml.
+skip <- Sys.getenv("CREDIBILITY_SKIP_VALIDATION") %in% c("1", "true", "TRUE")
+if (skip && nzchar(Sys.getenv("CI"))) {
+  cat("validate.R: CREDIBILITY_SKIP_VALIDATION is ignored on CI.\n", file = stderr())
+  skip <- FALSE
+}
 
 dirs <- list.dirs(claims_dir, recursive = FALSE)
 dirs <- dirs[!grepl("^[_.]", basename(dirs)) & file.exists(file.path(dirs, "claim.yml"))]
@@ -286,6 +348,13 @@ for (d in dirs) {
 }
 
 if (length(errors)) {
+  if (skip) {
+    cat(sprintf("\nvalidate.R: CREDIBILITY_SKIP_VALIDATION is set. %d problem(s) found in %d claim(s);",
+                length(errors), checked),
+        "the build continues for LOCAL PREVIEW ONLY. This output is not publishable.\n\n", file = stderr())
+    cat(paste0("  - ", errors, collapse = "\n"), "\n\n", file = stderr())
+    quit(status = 0)
+  }
   cat(sprintf("\nvalidate.R: %d problem(s) found in %d claim(s). The build stops here.\n\n",
               length(errors), checked), file = stderr())
   cat(paste0("  - ", errors, collapse = "\n"), "\n\n", file = stderr())

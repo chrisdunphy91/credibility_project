@@ -1,0 +1,20 @@
+---
+title: "Trade and tariffs"
+subtitle: "What the causal evidence says about the effects of U.S. tariffs on prices, jobs, and trade."
+listing:
+  id: claims
+  contents:
+    - "../claims/*/index.qmd"
+    - "!../claims/_template/"
+  include:
+    categories: "trade-tariffs"
+  type: table
+  fields: [title, categories, date-modified]
+  filter-ui: false
+  sort-ui: false
+---
+
+A tariff is a tax on imported goods, collected at the border. The United States raised tariffs on a wide range of imports in 2018–2019 and again, more broadly, in 2025–2026. Supporters and critics argue about who pays for them, whether they bring back manufacturing jobs, how much revenue they raise, and how trading partners respond. These are separate causal questions with separate evidence, so each one gets its own claim page below.
+
+::: {#claims}
+:::

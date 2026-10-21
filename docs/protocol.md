@@ -1,10 +1,15 @@
-# Evidence Review Protocol v0.1
+# Evidence Review Protocol v0.2
 
 Working draft, October 2026. Governing document for every claim page. CLAUDE.md defers to this file; where they disagree, this file wins.
 
+**Changelog.**
+
+- **v0.2 (2026-10-21).** §3.2: tested statements are written in the direction of the public claim, so "Supported" means the claim holds; the example now tests whether foreign sellers absorbed most of the tariff. §11.1: the certainty combining rule is replaced by a points rule (Partial = 1, Weak = 2), scored separately for each verdict scope.
+- **v0.1 (October 2026).** First working draft.
+
 ## Status and how to read this
 
-This is a working draft (v0.1) for internal discussion, not a published protocol. Every rule below is a proposal to be argued with. Items marked **[decide]** are open choices; items marked **[placeholder]** need a real value before launch.
+This is a working draft (v0.2) for internal discussion, not a published protocol. Every rule below is a proposal to be argued with. Items marked **[decide]** are open choices; items marked **[placeholder]** need a real value before launch.
 
 The protocol is versioned. A published claim page always names the protocol version it was reviewed under. A change to any rule in sections 3 through 12 is a new minor version (v1.1, v1.2); a change that would alter existing verdicts is a new major version and triggers re-review of affected pages (section 14).
 
@@ -36,7 +41,7 @@ Turning a public claim into a testable statement is the step most exposed to bia
 
 **3.1 Source the public claim.** Record at least two verbatim instances of the claim as it circulates (a speech, a bill summary, a widely shared post), with links and dates. The page quotes the most common phrasing.
 
-**3.2 Write the tested statement in PECOS form.** Population (whose outcomes), Exposure (the policy, with a dose where it matters), Comparison (what it is compared against), Outcome (what is measured, with a magnitude where the claim implies one), Setting (country and period). Example: *U.S. buyers (P) of goods subject to the 2018 and 2025 tariffs (E), relative to similar untariffed goods (C), paid import prices higher by close to the full tariff rate (O), in the first 24 months after imposition (S).*
+**3.2 Write the tested statement in PECOS form.** Population (whose outcomes), Exposure (the policy, with a dose where it matters), Comparison (what it is compared against), Outcome (what is measured, with a magnitude where the claim implies one), Setting (country and period). The tested statement is written in the direction of the public claim, so that "Supported" means the claim holds and "Not supported" means it does not. Example, for the claim that foreign countries pay for U.S. tariffs: *Foreign sellers (P) of goods subject to the 2018 and 2025 U.S. tariffs (E), relative to sellers of similar untariffed goods (C), cut their prices by enough to absorb most of the tariff, so that U.S. import prices rose by much less than the tariff rate (O), in the first 24 months after imposition (S).*
 
 **3.3 Steelman rule.** The tested statement is the strongest reasonable version of what proponents mean, not the weakest. If a claim has a strong and a weak reading, test the strong one and note the weak one. A page that tests a strawman fails review.
 
@@ -202,7 +207,7 @@ Certainty says how confident we are that the verdict would survive more and bett
 | External validity to the current policy | Relevance 1 studies dominate; the current policy is close in instrument and scale | Mostly Relevance 2, or the current policy differs materially in scale or scope | Mostly Relevance 3 |
 | Recency and publication status | Peer-reviewed work covers the current policy generation | Peer-reviewed work covers an earlier generation; working papers cover the current one | Only working papers, or nothing on the current generation |
 
-**11.1 Combining scores.** Start at High. Each Partial drops the grade one step on the first two Partials only; each Weak drops it one step without limit. The grade cannot be High with any Weak score, and cannot be Moderate with two or more Weak scores.
+**11.1 Combining scores.** Each Strong scores 0 points, each Partial 1 point, and each Weak 2 points. The total sets the grade: 0–1 points is High; 2–3 is Moderate; 4–5 is Low; 6 or more is Very low. A single Weak is therefore enough to rule out High. Criteria are scored separately for each verdict scope (section 11.2), never for the claim as a whole.
 
 | Grade | Meaning for the reader |
 | --- | --- |
@@ -353,7 +358,7 @@ CLAIM REGISTRATION
 
 Claim ID: [tr-04]
 Topic page: [Trade and tariffs]
-Protocol version: [v0.1]
+Protocol version: [v0.2]
 Registered: [date]   Registry link: [URL]
 
 1. PUBLIC CLAIM

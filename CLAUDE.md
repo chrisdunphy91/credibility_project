@@ -92,12 +92,13 @@ Modifiers: working paper → provisional tier with asterisk; failed replication 
 
 Verdict thresholds apply to Tier A/B, Relevance 1/2 studies: **Supported** (3+ studies, 80%+ in claimed direction, no Tier A opposite, magnitude consistent with the claim as stated); **Not supported** (mirror); **Mixed** (neither); **Cannot be graded** (fewer than 3 eligible studies — publish what exists and say what evidence is needed). Magnitude matters: directionally right with the wrong size is Not supported.
 
-Certainty criteria, each scored Strong / Partial / Weak: (1) number and quality of causal studies, (2) consistency of direction, (3) consistency of magnitude, (4) external validity to the current policy, (5) recency and publication status. Start at High; the first two Partials each drop one step; each Weak drops one step without limit; no High with any Weak. Where the evidence differs by policy generation, grade each generation separately.
+Certainty criteria, each scored Strong / Partial / Weak: (1) number and quality of causal studies, (2) consistency of direction, (3) consistency of magnitude, (4) external validity to the current policy, (5) recency and publication status. Points rule: Strong = 0, Partial = 1, Weak = 2; total 0–1 High, 2–3 Moderate, 4–5 Low, 6+ Very low (so no High with any Weak). Criteria are scored separately for each verdict scope, never for the claim as a whole; where the evidence differs by policy generation, each generation is its own scope.
 
 Claude proposes scores with reasons. Humans assign them.
 
 ## Claim formulation rules (protocol §3)
 
+- Write the tested statement in the direction of the public claim, so "Supported" means the claim holds.
 - Test the strong reading, note the weak one. A page that tests a strawman fails review.
 - A public claim that bundles several causal statements is split. **One page with two verdicts** when the evidence base is shared (e.g. immigrants-and-jobs: employment vs. wages). **Separate pages** when the evidence bases are disjoint (e.g. deportations-and-crime vs. immigrant crime rates). Link them both ways.
 - The public claim, the tested statement, and the mapping between them all appear on the page.
@@ -130,6 +131,7 @@ Every page has one, even when the verdict is clean. Classify each live dispute a
 - Callouts as defined in the template: `callout-important` for verdicts, `callout-note` for certainty, `callout-tip collapse="true"` for methods.
 - Per-claim bibliography via `bibliography: ../../references/<claim-id>.bib`.
 - `quarto render` must pass with no warnings before committing. `scripts/validate.R` must pass.
+- **Local preview of a claim that fails validation:** set `CREDIBILITY_SKIP_VALIDATION=1` for that one command (`CREDIBILITY_SKIP_VALIDATION=1 quarto preview` in bash; `$env:CREDIBILITY_SKIP_VALIDATION=1; quarto preview` in PowerShell, then `Remove-Item Env:CREDIBILITY_SKIP_VALIDATION`). `validate.R` still runs every check and prints the problems, then lets the build continue. It is ignored when `CI` is set, so the GitHub workflows always enforce. Never commit output rendered this way, and never set the variable in `_quarto.yml`, `.Renviron`, or a workflow.
 
 ## Git conventions
 

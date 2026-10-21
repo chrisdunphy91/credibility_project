@@ -38,11 +38,33 @@ studies <- read_csv("studies.csv", col_types = cols(.default = col_character()))
 `%||%` <- function(a, b) if (is.null(a) || length(a) == 0) b else a
 # Escape brackets that break markdown link text (kable already escapes "|").
 md_text <- function(x) gsub("([][])", "\\\\\\1", x %||% "")
+# Link only when the target is a real URL; "[VERIFY]" or a placeholder renders as plain text.
+md_link <- function(text, url) {
+  url <- url %||% ""
+  ifelse(grepl("^https?://\\S+$", url) & !grepl("[", url, fixed = TRUE),
+         paste0("[", text, "](", url, ")"), text)
+}
+# The study table gives each ID cell an anchor (id = study_id), so "S03" can link to "#S03".
+row_links <- function(x) {
+  ids <- trimws(strsplit(x %||% "", "[,;]")[[1]])
+  paste0("[", ids, "](#", ids, ")", collapse = ", ")
+}
+# Front matter of another page as a list, or NULL if the file does not exist.
+read_front <- function(qmd) {
+  if (!file.exists(qmd)) return(NULL)
+  l <- readLines(qmd, warn = FALSE, encoding = "UTF-8")
+  d <- which(trimws(l) == "---")
+  if (length(d) < 2 || d[1] != 1) return(list())
+  yaml.load(paste(l[(d[1] + 1):(d[2] - 1)], collapse = "\n")) %||% list()
+}
 ```
 
 ```{r header, echo=FALSE, results='asis'}
+topic_qmd   <- file.path("../../topics", paste0(claim$topic, ".qmd"))
+topic_title <- read_front(topic_qmd)$title
+topic <- if (is.null(topic_title)) claim$topic else sprintf("[%s](%s)", topic_title, topic_qmd)
 cat(sprintf("**Claim %s** · Topic: %s · Election relevance: %s · Protocol %s · Last updated %s\n\n",
-            claim$id, claim$topic, claim$election_relevance,
+            claim$id, topic, claim$election_relevance,
             claim$protocol_version, claim$last_updated))
 cat("**Where you hear it:** ", claim$public_claim$where_heard, "\n\n", sep = "")
 ```
@@ -78,7 +100,7 @@ cat(":::\n\n")
 # Each number links to its study_id in the table. Figures are the reviewers' summary of
 # the table, not new estimates.
 for (k in claim$key_numbers) {
-  cat(sprintf("- **%s** — %s *(%s)*\n", k$figure, k$label, k$source_rows))
+  cat(sprintf("- **%s** — %s *(%s)*\n", k$figure, k$label, row_links(k$source_rows)))
 }
 ```
 
@@ -86,7 +108,29 @@ for (k in claim$key_numbers) {
 
 DESCRIBE THE POLICY IN NEUTRAL TERMS and the distinct goals offered for it. Say which goal this page tests and which belong to other claim pages. Separate any bundled causal statements here (protocol §3.4).
 
-Related claims: LINK EACH RELATED CLAIM PAGE WITH ITS CURRENT VERDICT AND CERTAINTY.
+```{r related, echo=FALSE, results='asis'}
+# Optional (claim.yml related_claims): each related claim's current verdict and certainty,
+# read from its own claim.yml. Missing or draft claims show as "not yet published".
+if (length(claim$related_claims)) {
+  cat("Related claims:\n\n")
+  for (id in claim$related_claims) {
+    other <- file.path("..", id, "claim.yml")
+    page  <- file.path("..", id, "index.qmd")
+    fm    <- read_front(page)
+    if (!file.exists(other) || is.null(fm) || isTRUE(fm$draft)) {
+      cat(sprintf("- %s — not yet published\n", id))
+      next
+    }
+    rc <- read_yaml(other)
+    grades <- vapply(rc$verdicts %||% list(), function(v)
+      paste0(if (length(rc$verdicts) > 1) paste0(v$scope, ": ") else "", v$verdict %||% "",
+             if (is.null(v$certainty)) "" else paste0(", ", v$certainty, " certainty")),
+      character(1))
+    cat(sprintf("- [%s](%s) — %s\n", rc$short_title %||% id, page, paste(grades, collapse = "; ")))
+  }
+  cat("\n")
+}
+```
 
 ## 2. What does economic theory say?
 
@@ -106,8 +150,8 @@ TWO OR THREE SENTENCES on why this literature exists in the form it does (which 
 studies |>
   mutate(Weight = paste0(quality_tier, ifelse(pub_status == "Working paper", "*", ""),
                          " / R", relevance_tier)) |>
-  transmute(ID = study_id,
-            Study = paste0("[", md_text(citation), "](", doi_or_url, ")"),
+  transmute(ID = paste0("[", study_id, "]{#", study_id, "}"),   # anchor for key-number links
+            Study = md_link(md_text(citation), doi_or_url),
             Design = design,
             Setting = paste(country, period, sep = ", "),
             Outcome = md_text(outcome),
@@ -156,7 +200,22 @@ CLASSIFY each live dispute as **data**, **method**, **time horizon**, **scope**,
 
 **What would change our assessment.** A FALSIFIABLE STATEMENT: the number and kind of studies, findings, and designs that would move the verdict or the certainty grade.
 
-Expert perspectives (signed, opinion, written after this review): LINKS OR "None yet."
+```{r opinion, echo=FALSE, results='asis'}
+# Optional (claim.yml expert_panel, commentary): opinion shown beside the review, never in place of it.
+p <- claim$expert_panel
+if (!is.null(p)) {
+  res <- vapply(p$results %||% list(), function(r) sprintf("%s %s%%", r$response, r$share), character(1))
+  cat(sprintf("**What expert panels say.** %s, %s: “%s” %s. Expert opinion is shown alongside, never in place of, the literature.\n\n",
+              md_link(p$panel %||% "", p$url), p$date %||% "", p$question %||% "", paste(res, collapse = " · ")))
+}
+if (length(claim$commentary)) {
+  cat("Expert perspectives (signed opinion, written after this review):\n\n")
+  for (c in claim$commentary)
+    cat(sprintf("- %s, %s: %s (%s)\n", c$author %||% "", c$affiliation %||% "",
+                md_link(paste0("*", c$title %||% "", "*"), c$url), c$date %||% ""))
+  cat("\n")
+}
+```
 
 ## Methods for this page
 
@@ -164,8 +223,8 @@ Expert perspectives (signed, opinion, written after this review): LINKS OR "None
 m <- claim$methods
 cat("::: {.callout-tip collapse=\"true\" title=\"Protocol, registration, search, screening, AI use, reviewers\"}\n")
 cat(sprintf("- **Protocol:** %s ([read the protocol](../../methods.qmd))\n", claim$protocol_version))
-cat(sprintf("- **Registration:** [%s](%s), posted %s; amendments: %s\n",
-            m$registration$registry %||% "", m$registration$url %||% "",
+cat(sprintf("- **Registration:** %s, posted %s; amendments: %s\n",
+            md_link(m$registration$registry %||% "", m$registration$url),
             m$registration$date %||% "", m$registration$amendments %||% "none"))
 cat(sprintf("- **Sources searched:** %s; last run %s; rerun %s\n",
             paste(m$search$sources, collapse = ", "), m$search$last_run %||% "",

@@ -8,7 +8,7 @@ short_title: SHORT TITLE           # e.g. Who pays for tariffs?
 topic: TOPIC-SLUG                  # must match topics/<slug>.qmd
 site_name: The Credibility Project
 url: PAGE URL ONCE PUBLISHED
-protocol_version: v0.1             # REQUIRED
+protocol_version: v0.2             # REQUIRED
 election_relevance: High           # High / Medium / Low; sets re-search cadence
 last_updated: YYYY-MM-DD           # REQUIRED
 
@@ -41,6 +41,21 @@ certainty_scores:                  # REQUIRED: five rows per scope (protocol §1
 
 key_numbers:                       # 2–3 entries; each must cite study_id rows from studies.csv
   - { figure: "~100%", label: "what the number is", source_rows: "S01, S02, S03" }
+
+# OPTIONAL sections. Each renders only if present; validate.R does not require them.
+# Uncomment and fill, or leave commented out.
+# related_claims: [CLAIM-ID]       # claim ids (folder names); verdicts are read from each claim's own claim.yml
+# expert_panel:                    # a survey of experts, shown in section 6 beside the review
+#   panel: "PANEL NAME"
+#   question: "Exact wording of the question put to the panel."
+#   date: YYYY-MM-DD
+#   url: ""
+#   results:                       # share is a percentage, 0–100
+#     - { response: Agree, share: 0 }
+#     - { response: Uncertain, share: 0 }
+#     - { response: Disagree, share: 0 }
+# commentary:                      # signed opinion written after the review, linked from section 6
+#   - { author: "NAME", affiliation: "AFFILIATION", title: "TITLE", url: "", date: YYYY-MM-DD }
 
 reviewers:                         # REQUIRED: lead and second, each with a rationale; adversarial reader without
   - role: Lead reviewer
@@ -87,4 +102,4 @@ methods:
   challenge_contact: "challenges@SITE or a GitHub issues link"
 
 changelog:                         # REQUIRED: at least one entry
-  - { date: YYYY-MM-DD, version: "1.0", note: "Page created under Protocol v0.1." }
+  - { date: YYYY-MM-DD, version: "1.0", note: "Page created under Protocol v0.2." }

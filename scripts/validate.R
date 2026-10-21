@@ -34,11 +34,11 @@ ACRONYMS <- c("OSF", "NBER", "CEPR", "IZA", "IMF", "SSRN", "OECD", "PECOS", "GRA
               "USMCA", "WTO", "GDP", "CPI", "COVID", "COVID-19", "PCE", "FRED")
 
 # Template values that are legitimate as-is in a finished claim.
-DEFAULTS_OK <- c("The Credibility Project", "v0.1", "High", "Medium", "Low", "OSF",
+DEFAULTS_OK <- c("The Credibility Project", "v0.2", "High", "Medium", "Low", "OSF",
                  "signed commit", "none", "none declared", "per protocol §5.4",
                  "per protocol §6.1", "2000–present", "monthly", "quarterly",
                  "OpenAlex", "NBER", "SSRN", "EconLit", "Jobs", "Main", "1.0",
-                 "Page created under Protocol v0.1.", "~100%", "S01, S02, S03",
+                 "Page created under Protocol v0.2.", "~100%", "S01, S02, S03",
                  "Lead reviewer", "Second reviewer", "Adversarial reader", CRITERIA)
 
 `%||%` <- function(a, b) if (is.null(a)) b else a

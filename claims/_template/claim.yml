@@ -8,7 +8,7 @@ short_title: SHORT TITLE           # e.g. Who pays for tariffs?
 topic: TOPIC-SLUG                  # must match topics/<slug>.qmd
 site_name: The Credibility Project
 url: PAGE URL ONCE PUBLISHED
-protocol_version: v0.1             # REQUIRED
+protocol_version: v0.2             # REQUIRED
 election_relevance: High           # High / Medium / Low; sets re-search cadence
 last_updated: YYYY-MM-DD           # REQUIRED
 
@@ -87,4 +87,4 @@ methods:
   challenge_contact: "challenges@SITE or a GitHub issues link"
 
 changelog:                         # REQUIRED: at least one entry
-  - { date: YYYY-MM-DD, version: "1.0", note: "Page created under Protocol v0.1." }
+  - { date: YYYY-MM-DD, version: "1.0", note: "Page created under Protocol v0.2." }

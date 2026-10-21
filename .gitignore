@@ -1,0 +1,18 @@
+# Quarto
+/_site/
+/.quarto/
+/.luarc.json
+*_files/
+
+# macOS
+.DS_Store
+
+# R / RStudio
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.Rapp.history
+*.Rproj
+/renv/library/
+/renv/staging/

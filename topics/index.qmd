@@ -1,0 +1,17 @@
+---
+title: "Topics"
+subtitle: "Each page summarizes the published research on one policy question."
+toc: false
+listing:
+  contents:
+    - "*.qmd"
+    - "!_template.qmd"
+  type: grid
+  fields: [title, subtitle, date-modified, categories]
+  sort: "date-modified desc"
+  date-format: "MMMM D, YYYY"
+  categories: true
+  feed: false
+---
+
+Every conclusion on a topic page carries a certainty label. See [About](../about.qmd) for how studies are weighed and how labels are assigned.

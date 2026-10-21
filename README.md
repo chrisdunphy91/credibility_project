@@ -1,1 +1,3 @@
-# credibility_project
+# The Credibility Project
+
+A Quarto website that synthesizes the published academic literature on policy-relevant economic questions for a general audience, stating plainly what is known, what is not, and where researchers disagree, with a certainty label on every conclusion (methods in `about.qmd`; working conventions in `CLAUDE.md`). To work on it locally, install [Quarto](https://quarto.org) and run `quarto preview` from the repo root for a live-reloading preview, or `quarto render` to build the site into `_site/`. Each new topic is developed on its own branch (`topic/<slug>`; site design or config changes go on `site/<description>`), starting from `topics/_template.qmd` with working notes in `research/<slug>/` and references in `references/<slug>.bib`; it is rendered locally without warnings, pushed, and opened as a pull request that the author reviews and merges. Pushes to `main` are rendered and deployed to GitHub Pages automatically.

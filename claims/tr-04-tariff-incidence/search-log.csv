@@ -1,0 +1,2 @@
+date,source,query,filters,results,deduplicated_new,run_by,notes
+YYYY-MM-DD,OpenAlex,"[query string exactly as run]","[date range; type filters]",0,0,"AI agent (model, version) / initials","[anything unusual]"

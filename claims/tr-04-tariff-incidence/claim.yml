@@ -1,0 +1,103 @@
+# claim.yml — structured record for one claim page.
+# Everything that can be validated lives here; prose lives in index.qmd.
+# scripts/validate.R fails the build if any REQUIRED field is missing or a placeholder remains.
+# Sections marked (pre-registration) are frozen once registered; later changes go in methods.registration.amendments.
+#
+# STRUCTURAL TEST, 2026-10-21: transcribed from docs/mockups/claim-page-tariffs.html.
+# No search has been run, nothing is registered, and no human has reviewed anything here.
+# Verdicts and certainty scores are proposals (author decisions of 2026-10-21); they are not reviewer assignments.
+
+id: tr-04-tariff-incidence         # REQUIRED, e.g. tr-04
+short_title: Who pays for tariffs?
+topic: trade-tariffs               # must match topics/<slug>.qmd
+site_name: The Credibility Project
+url: PAGE URL ONCE PUBLISHED
+protocol_version: v0.2             # REQUIRED
+election_relevance: High           # High / Medium / Low; sets re-search cadence
+last_updated: 2026-10-21           # REQUIRED
+
+public_claim:                      # (pre-registration)
+  verbatim: "Foreign countries pay the cost of U.S. tariffs, not Americans."
+  instances:                       # REQUIRED: at least two
+    - { speaker: "[VERIFY]", date: "[VERIFY]", url: "[VERIFY]" }
+    - { speaker: "[VERIFY]", date: "[VERIFY]", url: "[VERIFY]" }
+  where_heard: "Campaign speeches, cable news segments, and social posts describing tariffs as a tax on China, Mexico, or Europe rather than on U.S. buyers."
+  mapping_note: "[VERIFY: draft mapping for gate 1, not in the mock-up] The public claim says foreign countries, not Americans, bear the cost of a tariff. We test the strong reading: that foreign sellers cut their prices by enough to absorb most of the tariff, so U.S. import prices rise by much less than the tariff itself. The weak reading, that foreign sellers absorb some share, is noted but not tested. Whether tariffs serve other goals (jobs, revenue, leverage) is set aside; those are separate claims."
+
+tested_statements:                 # (pre-registration) REQUIRED: one per verdict
+  # Split by policy generation (protocol §10.5). PECOS drafted by Claude; the mock-up has none.
+  - scope: 2018–19 tariffs
+    pecos: "[VERIFY: draft for gate 1] Foreign sellers (P) of goods subject to the 2018–2019 U.S. tariffs (E), relative to sellers of similar untariffed goods (C), cut their pre-tariff prices by enough to absorb most of the tariff, so that tariff-inclusive U.S. import prices rose by substantially less than the tariff rate (O), in the United States in the first 24 months after imposition (S)."
+  - scope: 2025–26 tariffs
+    pecos: "[VERIFY: draft for gate 1] Foreign sellers (P) of goods subject to the 2025–2026 U.S. tariffs (E), relative to sellers of similar untariffed goods (C), cut their pre-tariff prices by enough to absorb most of the tariff, so that tariff-inclusive U.S. import prices rose by substantially less than the tariff rate (O), in the United States in the first 24 months after imposition (S)."
+
+verdicts:                          # REQUIRED: one per tested statement, same scope labels
+  - scope: 2018–19 tariffs
+    verdict: Not supported         # Supported / Not supported / Mixed / Cannot be graded
+    statement: "The evidence shows U.S. buyers paid nearly the entire cost of the 2018–2019 tariffs."
+    certainty: High                # High / Moderate / Low / Very low  (omit if verdict is Cannot be graded)
+    certainty_note: "All five criteria proposed Strong for this generation (0 points); section 4 shows how the grade was built."
+  - scope: 2025–26 tariffs
+    verdict: Cannot be graded      # no certainty grade and no criterion rows (protocol §10, §11)
+    statement: "No study with a causal design has been published; what would be needed: two or more peer-reviewed studies of the 2025–26 tariffs estimating border pass-through over a multi-year window, or customs data showing whether exporters cut their prices."
+
+certainty_scores:                  # REQUIRED: five rows per gradeable scope (protocol §11); none for Cannot be graded
+  # 2018–19 only. Proposed by Claude from the mock-up's reasons; reviewers assign at gate 5.
+  - { scope: 2018–19 tariffs, criterion: "Number and quality of causal studies", score: Strong, reason: "Proposed; gate 5. Four independent teams, published in top journals, using different data." }
+  - { scope: 2018–19 tariffs, criterion: "Consistency of direction",             score: Strong, reason: "Proposed; gate 5. All find U.S. buyers bore most or all of the tariff." }
+  - { scope: 2018–19 tariffs, criterion: "Consistency of magnitude",             score: Strong, reason: "Proposed; gate 5. Border pass-through estimates cluster near 100%; retail pass-through varies by product." }
+  - { scope: 2018–19 tariffs, criterion: "External validity to current policy",  score: Strong, reason: "Proposed; gate 5. Every row studies the 2018–19 tariffs themselves (Relevance 1)." }
+  - { scope: 2018–19 tariffs, criterion: "Recency and publication status",       score: Strong, reason: "Proposed; gate 5. Peer-reviewed work covers the 2018–19 generation." }
+  # score: Strong / Partial / Weak. If reviewers disagreed, put both in reason: "R1 Strong, R2 Partial — resolved Partial because …"
+
+key_numbers:                       # 2–3 entries; each must cite study_id rows from studies.csv
+  - { figure: "~100%", label: "of the 2018–19 tariff passed through to U.S. import prices [VERIFY: mock-up figure]", source_rows: "S01, S02, S03" }
+  - { figure: "~12%",  label: "rise in washer and dryer prices after the 2018 washing-machine tariff [VERIFY: mock-up figure]", source_rows: "S04" }
+
+reviewers:                         # REQUIRED: lead and second, each with a rationale; adversarial reader without
+  - role: Lead reviewer
+    name: NAME
+    affiliation: AFFILIATION
+    coi: "none declared"
+    rationale: "150–300 words tracing the verdict and certainty to table rows."
+  - role: Second reviewer
+    name: NAME
+    affiliation: AFFILIATION
+    coi: "none declared"
+    rationale: "150–300 words, written independently before discussion."
+  - role: Adversarial reader
+    name: NAME
+    affiliation: AFFILIATION
+    coi: "stated position: …"
+    rationale: "Optional: comments on the steelman."
+
+methods:
+  registration:                    # REQUIRED
+    registry: OSF                  # or "signed commit"
+    url: REGISTRATION URL
+    date: YYYY-MM-DD
+    amendments: "none"             # or "YYYY-MM-DD: widened date range to 1995 because …"
+  search:                          # (pre-registration)
+    sources: [OpenAlex, NBER, SSRN, EconLit]
+    queries:
+      - "query string one"
+      - "query string two"
+    date_range: "2000–present"
+    grey_literature: "per protocol §5.4"
+    ai_agent: "[VERIFY: no search run] model and version; prompt at research/tr-04-tariff-incidence/prompt.md"
+    last_run: YYYY-MM-DD           # mock-up says "Oct 2026"; no search has been run
+    rerun_schedule: monthly        # monthly if election_relevance High, else quarterly
+  inclusion:                       # (pre-registration)
+    designs: "per protocol §6.1"
+    claim_specific: "Causal design on U.S. tariff incidence, 2000–present."
+  screening:                       # REQUIRED once search is complete
+    records: 0
+    deduplicated: 0
+    full_text: 0
+    included: 0
+  ai_use: "Structural test: Claude (Opus 5.5) transcribed this page from a design mock-up. No search was run; no row has been verified by [initials]."
+  challenge_contact: "challenges@SITE or a GitHub issues link"
+
+changelog:                         # REQUIRED: at least one entry
+  - { date: 2026-10-21, version: "0.1", note: "Structural test page transcribed from the claim-page mock-up; not registered, searched, or reviewed." }
+  - { date: 2026-10-21, version: "0.2", note: "Re-scoped under Protocol v0.2: 2025–26 tariffs set to Cannot be graded; Flaaen & Pierce (2019) moved to exclusions as off-PECOS; household-cost key number dropped." }

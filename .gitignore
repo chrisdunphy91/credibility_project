@@ -16,3 +16,5 @@
 *.Rproj
 /renv/library/
 /renv/staging/
+
+**/*.quarto_ipynb

@@ -38,6 +38,12 @@ studies <- read_csv("studies.csv", col_types = cols(.default = col_character()))
 `%||%` <- function(a, b) if (is.null(a) || length(a) == 0) b else a
 # Escape brackets that break markdown link text (kable already escapes "|").
 md_text <- function(x) gsub("([][])", "\\\\\\1", x %||% "")
+# Link only when the target is a real URL; "[VERIFY]" or a placeholder renders as plain text.
+md_link <- function(text, url) {
+  url <- url %||% ""
+  ifelse(grepl("^https?://\\S+$", url) & !grepl("[", url, fixed = TRUE),
+         paste0("[", text, "](", url, ")"), text)
+}
 ```
 
 ```{r header, echo=FALSE, results='asis'}
@@ -107,7 +113,7 @@ studies |>
   mutate(Weight = paste0(quality_tier, ifelse(pub_status == "Working paper", "*", ""),
                          " / R", relevance_tier)) |>
   transmute(ID = study_id,
-            Study = paste0("[", md_text(citation), "](", doi_or_url, ")"),
+            Study = md_link(md_text(citation), doi_or_url),
             Design = design,
             Setting = paste(country, period, sep = ", "),
             Outcome = md_text(outcome),
@@ -164,8 +170,8 @@ Expert perspectives (signed, opinion, written after this review): LINKS OR "None
 m <- claim$methods
 cat("::: {.callout-tip collapse=\"true\" title=\"Protocol, registration, search, screening, AI use, reviewers\"}\n")
 cat(sprintf("- **Protocol:** %s ([read the protocol](../../methods.qmd))\n", claim$protocol_version))
-cat(sprintf("- **Registration:** [%s](%s), posted %s; amendments: %s\n",
-            m$registration$registry %||% "", m$registration$url %||% "",
+cat(sprintf("- **Registration:** %s, posted %s; amendments: %s\n",
+            md_link(m$registration$registry %||% "", m$registration$url),
             m$registration$date %||% "", m$registration$amendments %||% "none"))
 cat(sprintf("- **Sources searched:** %s; last run %s; rerun %s\n",
             paste(m$search$sources, collapse = ", "), m$search$last_run %||% "",

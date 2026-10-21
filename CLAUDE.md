@@ -130,6 +130,7 @@ Every page has one, even when the verdict is clean. Classify each live dispute a
 - Callouts as defined in the template: `callout-important` for verdicts, `callout-note` for certainty, `callout-tip collapse="true"` for methods.
 - Per-claim bibliography via `bibliography: ../../references/<claim-id>.bib`.
 - `quarto render` must pass with no warnings before committing. `scripts/validate.R` must pass.
+- **Local preview of a claim that fails validation:** set `CREDIBILITY_SKIP_VALIDATION=1` for that one command (`CREDIBILITY_SKIP_VALIDATION=1 quarto preview` in bash; `$env:CREDIBILITY_SKIP_VALIDATION=1; quarto preview` in PowerShell, then `Remove-Item Env:CREDIBILITY_SKIP_VALIDATION`). `validate.R` still runs every check and prints the problems, then lets the build continue. It is ignored when `CI` is set, so the GitHub workflows always enforce. Never commit output rendered this way, and never set the variable in `_quarto.yml`, `.Renviron`, or a workflow.
 
 ## Git conventions
 

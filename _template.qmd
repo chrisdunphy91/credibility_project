@@ -1,0 +1,106 @@
+---
+title: "TOPIC TITLE (e.g. The Minimum Wage)"
+subtitle: "One-sentence framing of the question this page answers."
+description: "One or two sentences for search engines and link previews."
+date: YYYY-MM-DD
+date-modified: YYYY-MM-DD
+categories: [labor, prices]        # choose from the category list in _quarto.yml
+bibliography: ../references/SLUG.bib
+csl: ../references/apa.csl
+toc: true
+toc-depth: 2
+---
+
+<!--
+HOW TO USE THIS TEMPLATE
+- Copy to topics/<slug>.qmd. Replace every ALL-CAPS placeholder.
+- Keep every section heading exactly as written, in this order.
+- If a section has nothing to say, keep the heading and write one sentence saying why.
+- Every empirical claim gets a citation: [@key] or [@key1; @key2].
+- Every conclusion in "What we can conclude" gets exactly one certainty callout.
+- Delete these instructions and all placeholder text before committing.
+-->
+
+::: {.callout-important appearance="simple" icon="false"}
+**The short version.** Two to four sentences a reader can take away if they read nothing else. State the main conclusion and its certainty label in plain words.
+:::
+
+## What this policy is
+
+Describe the policy in neutral terms: what it does mechanically, who it applies to, and how it varies across places and time in the United States (and elsewhere where relevant). Include the basic facts a reader needs to follow the rest of the page, such as current levels, coverage, or spending. Cite descriptive sources for facts here.
+
+State the goals its proponents give for it and the main concerns its critics raise, in a sentence or two each, without evaluating them yet.
+
+## What economic theory predicts
+
+Explain the standard economic reasoning in plain language.
+
+- **Intended effect.** What the policy is designed to do and the mechanism by which theory says it would do it.
+- **Trade-offs.** Who bears the costs, and through what channel.
+- **Unintended consequences.** Behavioral responses theory predicts (substitution, avoidance, pass-through to prices, changes in hours or quality, effects on groups the policy does not target).
+- **Where theory is ambiguous.** Cases where the predicted sign or size depends on assumptions (market structure, elasticities, enforcement, time horizon). Be explicit that these are the questions the empirical literature has to settle.
+
+Theory tells us what to look for; it does not tell us magnitudes. Say so.
+
+## What the empirical literature finds
+
+Organize by outcome, one subsection each. Common outcomes include the direct target of the policy, employment and wages, prices, government budgets, and distributional effects. Add or remove subsections to fit the topic.
+
+For each outcome:
+
+1. Describe the best-identified studies (design, setting, period) and what they found, with effect sizes in reader-friendly units and the range across studies.
+2. Note the strongest dissenting or contrasting findings and the leading explanations for the disagreement.
+3. Mention relevant meta-analyses or systematic reviews and any publication-bias concerns.
+
+### OUTCOME 1
+
+PLACEHOLDER.
+
+### OUTCOME 2
+
+PLACEHOLDER.
+
+### Where the literature disagrees
+
+Summarize the live disputes among researchers, what each side's evidence rests on, and whether the disagreement is about direction, magnitude, or context. Do not resolve it here; that happens in the next section with a certainty label.
+
+## What we can conclude
+
+One subsection per conclusion. Each gets a certainty callout and a brief justification.
+
+### CONCLUSION 1 (stated as a plain sentence)
+
+::: {.callout-note title="Certainty: HIGH / MODERATE / LOW / UNKNOWN"}
+One or two sentences restating the conclusion with its magnitude and range.
+:::
+
+**How we reached this.** Which studies carry the weight, what tier of evidence they are, how consistent they are across settings, and why dissenting findings did or did not change the label. Reference the evidence hierarchy and certainty rubric in [About](../about.qmd).
+
+### CONCLUSION 2
+
+::: {.callout-note title="Certainty: HIGH / MODERATE / LOW / UNKNOWN"}
+PLACEHOLDER.
+:::
+
+**How we reached this.** PLACEHOLDER.
+
+## What we still don't know
+
+List the important open questions, each with a sentence on why it is open: no studies, only weak designs, findings that do not transfer across settings, or effects that take longer to appear than the data allow. Distinguish "probably small" from "unknown."
+
+- OPEN QUESTION 1.
+- OPEN QUESTION 2.
+
+## How to read this page
+
+::: {.callout-tip collapse="true" title="Sources, methods, and revision history"}
+- **Search conducted:** YYYY-MM-DD. Databases and working-paper series searched: PLACEHOLDER.
+- **Studies considered / included:** N considered, M included. Inclusion decisions are recorded in the project's research log.
+- **Revision history:** YYYY-MM-DD — first published.
+- **How to flag an error or a study we missed:** CONTACT METHOD.
+:::
+
+## References
+
+::: {#refs}
+:::

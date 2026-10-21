@@ -10,7 +10,7 @@ The product is **transparency**, not verdicts. Every page shows the claim as peo
 
 We do not recommend policies. We do not discuss politicians. We describe what the evidence shows about a policy's effects, including who gains and who loses, and let readers decide.
 
-Working name: The Credibility Project. Use the `site-title` variable from `_quarto.yml`; never hardcode it in content.
+Working name: The Credibility Project. Use the `site-title` variable from `_variables.yml` (`{{< var site-title >}}`); never hardcode it in content.
 
 ## Scope rule
 

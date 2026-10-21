@@ -42,6 +42,21 @@ certainty_scores:                  # REQUIRED: five rows per scope (protocol §1
 key_numbers:                       # 2–3 entries; each must cite study_id rows from studies.csv
   - { figure: "~100%", label: "what the number is", source_rows: "S01, S02, S03" }
 
+# OPTIONAL sections. Each renders only if present; validate.R does not require them.
+# Uncomment and fill, or leave commented out.
+# related_claims: [CLAIM-ID]       # claim ids (folder names); verdicts are read from each claim's own claim.yml
+# expert_panel:                    # a survey of experts, shown in section 6 beside the review
+#   panel: "PANEL NAME"
+#   question: "Exact wording of the question put to the panel."
+#   date: YYYY-MM-DD
+#   url: ""
+#   results:                       # share is a percentage, 0–100
+#     - { response: Agree, share: 0 }
+#     - { response: Uncertain, share: 0 }
+#     - { response: Disagree, share: 0 }
+# commentary:                      # signed opinion written after the review, linked from section 6
+#   - { author: "NAME", affiliation: "AFFILIATION", title: "TITLE", url: "", date: YYYY-MM-DD }
+
 reviewers:                         # REQUIRED: lead and second, each with a rationale; adversarial reader without
   - role: Lead reviewer
     name: NAME

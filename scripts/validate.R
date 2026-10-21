@@ -189,13 +189,19 @@ check_claim <- function(dir) {
       err(f, paste0(p, ".verdict"), sprintf("must be one of: %s", paste(VERDICTS, collapse = " / ")))
     if (is_blank(v$statement)) err(f, paste0(p, ".statement"), "missing")
     gradeable <- !identical(v$verdict, "Cannot be graded")
-    if ((gradeable || !is.null(v$certainty)) && !isTRUE(v$certainty %in% CERTAINTY))
+    if (!gradeable && !is.null(v$certainty))
+      err(f, paste0(p, ".certainty"), "must be omitted when the verdict is Cannot be graded")
+    if (gradeable && !isTRUE(v$certainty %in% CERTAINTY))
       err(f, paste0(p, ".certainty"), sprintf("must be one of: %s", paste(CERTAINTY, collapse = " / ")))
   }
 
-  # Certainty criteria: five rows per scope (protocol §11).
+  # Certainty criteria: five rows per gradeable scope, none for a "Cannot be graded"
+  # scope (protocol §10, §11).
   cs <- claim$certainty_scores %||% list()
-  for (s in vscopes) {
+  ungraded <- unlist(lapply(Filter(function(v) identical(v$verdict, "Cannot be graded"), vs), `[[`, "scope"))
+  for (s in intersect(ungraded, unlist(lapply(cs, `[[`, "scope"))))
+    err(f, sprintf("certainty_scores[%s]", s), sprintf("scope '%s' is Cannot be graded and takes no criterion rows", s))
+  for (s in setdiff(vscopes, ungraded)) {
     rows <- Filter(function(r) identical(r$scope, s), cs)
     crit <- unlist(lapply(rows, `[[`, "criterion"))
     if (length(rows) != 5 || !setequal(crit, CRITERIA) || anyDuplicated(crit))
